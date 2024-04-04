@@ -1,0 +1,8 @@
+---
+- hosts: all
+  tasks:
+  - name: Test jinja2template
+    template: 
+      src: config.j2 
+      dest: /tmp/test.conf
+      remote_src: no

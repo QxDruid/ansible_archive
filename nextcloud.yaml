@@ -1,0 +1,13 @@
+- name: creation User and Database
+  hosts:
+  - mariadb
+  vars_files:
+    ./varfile.yaml
+  tasks:
+  - include_role:
+      name: mariadb
+      tasks_from: create_database
+  - include_role:
+      name: mariadb
+      tasks_from: create_user
+  become: yes

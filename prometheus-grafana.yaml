@@ -1,0 +1,12 @@
+---
+- hosts: slave_servers
+  roles:
+    - docker_install
+    - node_exporter
+
+- hosts: master_servers
+  roles:
+    - docker_install
+    - node_exporter
+    - prometheus_server
+    - grafana_server

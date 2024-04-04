@@ -1,0 +1,11 @@
+- name: install mariadb
+  hosts:
+  - mariadb
+  tasks:
+  - include_role:
+      name: mariadb
+      tasks_from: install
+
+  vars_files:
+    ./varfile.yaml
+  become: yes

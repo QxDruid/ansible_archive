@@ -1,0 +1,61 @@
+---
+- name: Install requirements
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - nginx
+    - mariadb-client 
+    - libapache2-mod-php7.4
+    - php7.4-fpm
+    - php7.4-gd 
+    - php7.4-mysql 
+    - php7.4-curl 
+    - php7.4-mbstring 
+    - php7.4-intl
+    - php7.4-gmp 
+    - php7.4-bcmath 
+    - php-imagick 
+    - php7.4-xml 
+    - php7.4-zip
+
+- name: Download nextcloud
+  get_url:
+    url: https://download.nextcloud.com/server/releases/nextcloud-22.1.1.tar.bz2
+    dest: /tmp
+
+- name: Extract tar.bz2 into /usr/share/nginx/www
+  ansible.builtin.unarchive:
+    src: /tmp/nextcloud-22.1.1.tar.bz2
+    dest: /var/www/
+    remote_src: yes
+
+- name: nginx config creation
+  template:
+    src: nextcloud.conf
+    dest: /var/www/nextcloud/config/config.php
+
+- name: nginx config creation
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/nextcloud
+
+- name: nginx enable webpage
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/nextcloud
+    dest: /etc/nginx/sites-enabled/nextcloud
+    state: link
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: /var/www/nextcloud
+    owner: www-data
+    group: www-data
+    mode: '0744'
+
+- name: restart nginx
+  systemd:
+    name: nginx
+    state: restarted
+    enabled: true

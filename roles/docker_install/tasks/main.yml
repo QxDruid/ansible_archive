@@ -1,0 +1,55 @@
+---
+- name: Uninstal Old versions
+  apt:
+    name: "{{ item }}"
+    state: absent
+    update_cache: yes
+  with_items:
+  - docker
+  - docker-engine
+  - docker.io
+  - containerd
+  - runc
+
+- name: Install requirements
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+   
+- name: search lsb_release -sc
+  command: lsb_release -sc
+  register: lsb_release
+
+- name: Add repository
+  apt_repository:
+    repo: "deb https://download.docker.com/linux/ubuntu {{ lsb_release.stdout }} stable"
+    state: present
+    filename: docker
+
+- name: Install
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+
+- name: Systemctl restart docker
+  systemd:
+    name: docker
+    state: restarted
+    enabled: yes

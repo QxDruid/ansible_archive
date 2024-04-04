@@ -1,0 +1,9 @@
+- name: install Jenkins
+  hosts:
+  - jenkins
+  tasks:
+  - include_role:
+      name: jenkins
+      tasks_from: main
+  become: yes
+  gather_facts: no

@@ -1,0 +1,16 @@
+---
+- name: Ping Servers 
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Tsk Ping
+    ping:
+  
+  - name: Update cahe
+    apt:
+      update_cache: yes
+  
+  - name: Upgrade
+    apt:
+      upgrade: yes
